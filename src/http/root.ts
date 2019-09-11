@@ -4,13 +4,13 @@ import SubApp from "../subapp/SubApp"
 export default class HttpRootApp extends SubApp {
 
     private getRoot(req: Request, res: Response) {
+
         res.send("<h2>Hello world!</h2>")
     }
 
-    routing(): void {
-        this.app.get("/", this.getRoot)
-        this.app.use(this.error500)
-        this.app.use(this.error404)
+    routing(): SubApp {
+        this.express.get("/", this.getRoot)
+        return this
     }
 
     error500(err: Error, request: Request, response: Response, next: NextFunction) {

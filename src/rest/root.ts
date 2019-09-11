@@ -1,17 +1,20 @@
 import {Request, Response, NextFunction} from "express"
 import SubApp from "../subapp/SubApp"
+import {getConnection} from "typeorm"
+import {User} from "../entity/user"
 
 export default class RestApp extends SubApp {
 
-    private getUser(req: Request, res: Response) {
-        res.json({"Key": [23, 34]});
+    private async getUser(req: Request, res: Response) {
+        let users = await getConnection().manager.find(User);
+        res.json({"users": users});
     }
 
 
-    routing(): void {
-        this.app.get("/", this.getUser)
-        this.app.use(this.error500)
-        this.app.use(this.error404)
+    routing(): SubApp {
+        this.express.get("/", this.getUser)
+        this.errorHandling()
+        return this
     }
 
     error500(err: Error, req: Request, res: Response, next: NextFunction): void {
