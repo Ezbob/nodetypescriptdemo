@@ -1,5 +1,5 @@
 import {Request, Response, NextFunction} from "express"
-import SubApp, {Endpoint, HTTPMethod} from "../subapp/SubApp"
+import SubApp, {Endpoint, HTTPMethod, EndpointMiddleware} from "../subapp/SubApp"
 import SubAppErrorHandler from "../subapp/ErrorHandler"
 
 export default class HttpRootApp extends SubApp {
@@ -7,7 +7,13 @@ export default class HttpRootApp extends SubApp {
     @Endpoint("/", HTTPMethod.GET)
     private getRoot(req: Request, res: Response) {
 
-        res.send("<h2>Hello world!</h2>")
+        res.send(`<h2>Hello ${req.params["it"]}!</h2>`)
+    }
+
+    @EndpointMiddleware("/", HTTPMethod.GET)
+    private rootMiddleWare(req: Request, res: Response, next: NextFunction) {
+        req.params["it"] = "world"
+        next()
     }
 }
 
