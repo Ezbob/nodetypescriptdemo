@@ -1,5 +1,6 @@
 import {Request, Response, NextFunction} from "express"
 import SubApp from "../subapp/SubApp"
+import SubAppErrorHandler from "../subapp/ErrorHandler"
 
 export default class HttpRootApp extends SubApp {
 
@@ -12,14 +13,16 @@ export default class HttpRootApp extends SubApp {
         this.express.get("/", this.getRoot)
         return this
     }
+}
 
-    error500(err: Error, request: Request, response: Response, next: NextFunction) {
-        console.log(err.stack)
-        response.status(500).send("Internal server error")
+export class HttpRootErrorHandler extends SubAppErrorHandler {
+    notFoundHandler(req: Request, res: Response, next: NextFunction): void {
+        res.status(404).send("Not found")
     }
 
-    error404(_req: Request, res: Response, next: NextFunction) {
-        res.status(404).send("Not found")
+    exceptionHandler(err: Error, req: Request, res: Response, next: NextFunction): void {
+        console.log(err.stack)
+        res.status(500).send("Internal server error")
     }
 }
 

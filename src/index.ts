@@ -1,5 +1,5 @@
-import RestApp from "./rest/root"
-import HttpRootApp from "./http/root"
+import RestApp, {RestErrorHandler} from "./rest/root"
+import HttpRootApp, {HttpRootErrorHandler} from "./http/root"
 import configDB from "./databaseConfig"
 
 async function main() {
@@ -9,9 +9,10 @@ async function main() {
     let rootApp = new HttpRootApp();
     let restApp = new RestApp();
 
-    restApp.attachOnto("/api", rootApp)
+    restApp.attachOnto(rootApp, "/api")
 
-    rootApp.errorHandling()
+    restApp.attachErrorHandler(new RestErrorHandler())
+    rootApp.attachErrorHandler(new HttpRootErrorHandler())
 
     rootApp.express.listen(port, () => console.log(`Listening on ${port}`))
 }
